@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Gemma 텍스트 생성기</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    .header {
+      background-color: #007BFF;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      font-size: 24px;
+    }
+
+    .container {
+      padding: 20px;
+    }
+
+    textarea {
+      width: 100%;
+      font-size: 16px;
+    }
+
+    button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+
+    #output {
+      margin-top: 20px;
+      background: #f4f4f4;
+      padding: 15px;
+      border-radius: 5px;
+    }
+
+    #time {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">김도건의 첫 지능 채팅 서비스</div>
+
+  <div class="container">
+    <h1>Gemma 텍스트 생성기</h1>
+    <textarea id="input" rows="4" cols="50" placeholder="질문을 입력하세요..."></textarea><br>
+    <button onclick="generateText()">생성하기</button>
+    <h3>결과:</h3>
+    <div id="output"></div>
+    <div id="time"></div>
+  </div>
+
+  <script>
+    async function generateText() {
+      const inputText = document.getElementById("input").value;
+      const outputDiv = document.getElementById("output");
+      const timeDiv = document.getElementById("time");
+
+      outputDiv.innerText = "응답 생성 중...";
+      timeDiv.innerText = "";
+
+      const startTime = performance.now();  // 시작 시간
+
+      const response = await fetch("http://127.0.0.1:8000/generate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ text: inputText })
+      });
+
+      const endTime = performance.now();  // 끝 시간
+      const timeTaken = ((endTime - startTime) / 1000).toFixed(2);  // 초 단위로 변환
+
+      const data = await response.json();
+      outputDiv.innerText = data.response;
+      timeDiv.innerText = `⏱️ 응답 시간: ${timeTaken}초`;
+    }
+  </script>
+
+</body>
+</html>
